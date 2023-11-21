@@ -47,7 +47,7 @@ namespace ShootEmUp
 
         private void Fire()
         {
-            var startPosition = this.weaponComponent.Position;
+            var startPosition = this.weaponComponent.position;
             var vector = (Vector2) this.target.transform.position - startPosition;
             var direction = vector.normalized;
             this.OnFire?.Invoke(this.gameObject, startPosition, direction);

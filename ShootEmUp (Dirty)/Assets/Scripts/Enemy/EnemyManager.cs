@@ -4,54 +4,51 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
+
     public sealed class EnemyManager : MonoBehaviour
     {
         [SerializeField]
-        private EnemyPool enemyPool;
+        private EnemySpawner enemySpawner;
+        [SerializeField] private EnemyPool enemyPool;
 
         [SerializeField]
-        private BulletPool bulletPool;
+        private BulletSystem bulletSystem;
         
-        private readonly HashSet<GameObject> m_activeEnemies = new();
+        private readonly HashSet<GameObject> activeEnemies = new();
 
-        private IEnumerator Start()
+        public void SpawnEnemy()
         {
-            while (true)
+            var _enemy = enemySpawner.SpawnEnemy();
+            if (_enemy != null)
             {
-                yield return new WaitForSeconds(1);
-                var enemy = this.enemyPool.SpawnEnemy();
-                if (enemy != null)
+                if (this.activeEnemies.Add(_enemy))
                 {
-                    if (this.m_activeEnemies.Add(enemy))
-                    {
-                        enemy.GetComponent<HitPointsComponent>().hpEmpty += this.OnDestroyed;
-                        enemy.GetComponent<EnemyAttackAgent>().OnFire += this.OnFire;
-                    }    
+                    _enemy.GetComponent<HitPointsComponent>().hpEmpty += this.OnDestroyed;
+                    _enemy.GetComponent<EnemyAttackAgent>().OnFire += this.OnFire;
                 }
             }
         }
-
-        private void OnDestroyed(GameObject enemy)
+        private void OnDestroyed(GameObject _enemy)
         {
-            if (m_activeEnemies.Remove(enemy))
+            if (activeEnemies.Remove(_enemy))
             {
-                enemy.GetComponent<HitPointsComponent>().hpEmpty -= this.OnDestroyed;
-                enemy.GetComponent<EnemyAttackAgent>().OnFire -= this.OnFire;
+                _enemy.GetComponent<HitPointsComponent>().hpEmpty -= this.OnDestroyed;
+                _enemy.GetComponent<EnemyAttackAgent>().OnFire -= this.OnFire;
 
-                enemyPool.UnspawnEnemy(enemy);
+                enemyPool.RemoveEnemy(_enemy);
             }
         }
 
-        private void OnFire(GameObject enemy, Vector2 position, Vector2 direction)
+        private void OnFire(GameObject _enemy, Vector2 _position, Vector2 _direction)
         {
-            bulletPool.SpawnBullet(new Args
+            bulletSystem.SpawnBullet(new Args
             {
                 isPlayer = false,
                 physicsLayer = (int) PhysicsLayer.ENEMY,
                 color = Color.red,
                 damage = 1,
-                position = position,
-                velocity = direction * 2.0f
+                position = _position,
+                velocity = _direction * 2.0f
             });
         }
     }

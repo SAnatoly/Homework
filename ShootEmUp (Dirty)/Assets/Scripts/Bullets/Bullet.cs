@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public class Bullet : MonoBehaviour
+    public sealed class Bullet : MonoBehaviour
     {
         public event Action<Bullet, Collision2D> OnCollisionEntered;
 
@@ -40,7 +40,5 @@ namespace ShootEmUp
         {
             this.spriteRenderer.color = color;
         }
-
-        
     }
 }

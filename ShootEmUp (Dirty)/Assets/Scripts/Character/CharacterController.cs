@@ -2,32 +2,41 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public class CharacterController : MonoBehaviour
+    public sealed class CharacterController : MonoBehaviour
     {
+        [SerializeField] private GameObject character; 
         [SerializeField] private GameManager gameManager;
-        [SerializeField] private BulletPool bulletPool;
+        [SerializeField] private BulletSystem bulletSystem;
         [SerializeField] private BulletConfig bulletConfig;
-        [SerializeField] private GameObject character;
-        public bool fireRequired;
+        [SerializeField] private CharacterAttackAgent characterAttackAgent;
+        [SerializeField] private CharacterMoveAgent characterMoveAgent;
 
-       
 
-        public void OnCharacterDeath(GameObject gameManager) => this.gameManager.FinishGame();
-
-       
-
-        public void OnFlyBullet()
+        public void Start()
         {
-            var weapon = this.character.GetComponent<WeaponComponent>();
-            bulletPool.SpawnBullet(new Args
-            {
-                isPlayer = true,
-                physicsLayer = (int) this.bulletConfig.physicsLayer,
-                color = this.bulletConfig.color,
-                damage = this.bulletConfig.damage,
-                position = weapon.Position,
-                velocity = weapon.Rotation * Vector3.up * this.bulletConfig.speed
-            });
+            characterMoveAgent.character = character;
         }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                characterAttackAgent.OnFlyBullet(character, bulletSystem, bulletConfig);
+            }
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                characterMoveAgent.horizontalDirection = -1;
+            }
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                characterMoveAgent.horizontalDirection = 1;
+            }
+            else
+            {
+                characterMoveAgent.horizontalDirection = 0;
+            }
+        }
+
     }
 }

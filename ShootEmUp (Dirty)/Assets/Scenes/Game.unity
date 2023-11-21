@@ -226,6 +226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 363245576}
   - component: {fileID: 363245577}
+  - component: {fileID: 363245579}
   - component: {fileID: 363245578}
   m_Layer: 0
   m_Name: BulletSystem
@@ -248,7 +249,7 @@ Transform:
   m_Children:
   - {fileID: 1831741369}
   m_Father: {fileID: 3951702117947426122}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &363245577
 MonoBehaviour:
@@ -262,9 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bd15923a144ffbab0333dc6e74e641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidbody2D: {fileID: 0}
-  spriteRenderer: {fileID: 0}
-  levelBounds: {fileID: 2572952653776768186}
+  bulletSpawner: {fileID: 363245579}
   bulletPool: {fileID: 363245578}
 --- !u!114 &363245578
 MonoBehaviour:
@@ -275,14 +274,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 363245575}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f600fdc7a858e34b89fe07a85a6444e, type: 3}
+  m_Script: {fileID: 11500000, guid: 92f9ff2a6ea93bb499c970597855ae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   initialCount: 50
   container: {fileID: 1831741369}
   prefab: {fileID: 201757604187811891, guid: 5fe72886874b4e445b06cf777ca4920d, type: 3}
+  levelBounds: {fileID: 2572952653776768186}
+--- !u!114 &363245579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363245575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438b105baed3a6b47933e4eda821b599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   worldTransform: {fileID: 1683128698}
-  bulletSystem: {fileID: 363245577}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,6 +389,8 @@ GameObject:
   - component: {fileID: 562298204}
   - component: {fileID: 562298207}
   - component: {fileID: 562298205}
+  - component: {fileID: 562298208}
+  - component: {fileID: 562298209}
   m_Layer: 0
   m_Name: EnemySystem
   m_TagString: Untagged
@@ -399,7 +412,7 @@ Transform:
   m_Children:
   - {fileID: 178513672}
   m_Father: {fileID: 3951702117947426122}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &562298205
 MonoBehaviour:
@@ -413,8 +426,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32dae85f8264479bac19d85418d92392, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemySpawner: {fileID: 562298208}
   enemyPool: {fileID: 562298207}
-  bulletPool: {fileID: 363245578}
+  bulletSystem: {fileID: 363245577}
 --- !u!114 &562298207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,11 +441,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bdcdf257e0242258e7a67fe13d80e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPositions: {fileID: 7166351703523243261}
-  character: {fileID: 4414282821800802397}
-  worldTransform: {fileID: 1683128698}
+  countEnemy: 7
   container: {fileID: 178513672}
   prefab: {fileID: 559606060570185700, guid: 87fe189881a524806800482ac8eaaa83, type: 3}
+--- !u!114 &562298208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562298203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7997b07e4ff133a4ea5a34e6670e9aab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 4414282821800802397}
+  enemyPositions: {fileID: 7166351703523243261}
+  worldTransform: {fileID: 1683128698}
+  enemyPool: {fileID: 562298207}
+--- !u!114 &562298209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562298203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5193511944bd2a84481d6f07afd9693b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitingSeconds: 1
+  enemyManager: {fileID: 562298205}
 --- !u!1 &883274639
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,52 +536,6 @@ Transform:
   m_Father: {fileID: 9048567252472711235}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1134805359
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1134805360}
-  - component: {fileID: 1134805361}
-  m_Layer: 0
-  m_Name: InputManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1134805360
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1134805359}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3951702117947426122}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1134805361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1134805359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b55e0c0d37f64d1f835fe367d4939922, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  character: {fileID: 4414282821800802397}
-  characterController: {fileID: 1879759790}
 --- !u!850595691 &1263964384
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -737,6 +733,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1879759789}
   - component: {fileID: 1879759790}
+  - component: {fileID: 1879759793}
   - component: {fileID: 1879759792}
   - component: {fileID: 1879759791}
   m_Layer: 0
@@ -773,11 +770,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c57ed31af8d94ec3b11df7e2b588d40f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 3951702117947426123}
-  bulletPool: {fileID: 363245578}
-  bulletConfig: {fileID: 11400000, guid: 7138ae5d32d814e0ca50c616c65ea105, type: 2}
   character: {fileID: 4414282821800802397}
-  fireRequired: 0
+  gameManager: {fileID: 3951702117947426123}
+  bulletSystem: {fileID: 363245577}
+  bulletConfig: {fileID: 11400000, guid: 7138ae5d32d814e0ca50c616c65ea105, type: 2}
+  characterAttackAgent: {fileID: 1879759793}
+  characterMoveAgent: {fileID: 1879759791}
 --- !u!114 &1879759791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,11 +785,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1879759788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b11ef0a2f210d2b45ad2ad0fd4fa9e7d, type: 3}
+  m_Script: {fileID: 11500000, guid: 102a588cd99a38c438995092fef70d80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 4414282821800802397}
-  characterController: {fileID: 1879759790}
+  character: {fileID: 0}
 --- !u!114 &1879759792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -801,10 +798,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1879759788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84de3d04b99078d4ebf3dcdd47f128e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b7d2e1f391ba054198f167b8790e95a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 1879759790}
+  character: {fileID: 4414282821800802397}
+  gameManager: {fileID: 3951702117947426123}
+--- !u!114 &1879759793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1879759788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d4cc3da0f9b8114f9cca9d79a3e9236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &61006797492197339
 GameObject:
   m_ObjectHideFlags: 0
@@ -1281,7 +1291,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1879759789}
-  - {fileID: 1134805360}
   - {fileID: 363245576}
   - {fileID: 562298204}
   m_Father: {fileID: 0}
