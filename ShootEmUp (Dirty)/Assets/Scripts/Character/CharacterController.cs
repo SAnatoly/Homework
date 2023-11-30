@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class CharacterController : MonoBehaviour
+    public sealed class CharacterController : MonoBehaviour, Listeners.IGamePauseListener, Listeners.IGameResumListener, Listeners.IGameStartListener, Listeners.IGameFinishListener, Listeners.IGameUpdate
     {
         [SerializeField] private GameObject character; 
         [SerializeField] private GameManager gameManager;
@@ -11,14 +11,14 @@ namespace ShootEmUp
         [SerializeField] private CharacterAttackAgent characterAttackAgent;
         [SerializeField] private CharacterMoveAgent characterMoveAgent;
 
-
-        public void Start()
+        private void Awake()
         {
-            characterMoveAgent.character = character;
+            enabled = false;
         }
 
-        private void Update()
+        public void OnUpdate(float deltaTime)
         {
+            Debug.Log("Update");
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 characterAttackAgent.OnFlyBullet(character, bulletSystem, bulletConfig);
@@ -38,5 +38,26 @@ namespace ShootEmUp
             }
         }
 
+        public void OnPause()
+        {
+            enabled = false;
+        }
+
+        public void OnResum()
+        {
+            enabled = true;
+        }
+
+        public void OnStart()
+        {
+
+            enabled = true;
+            characterMoveAgent.character = character;
+        }
+
+        public void OnFinish()
+        {
+            enabled = false;
+        }
     }
 }

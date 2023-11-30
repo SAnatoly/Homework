@@ -376,8 +376,12 @@
 "Assets/Scripts/Enemy/EnemyPositions.cs"
 "Assets/Scripts/Enemy/EnemySpawner.cs"
 "Assets/Scripts/GameManager/GameManager.cs"
+"Assets/Scripts/GameManager/GameManagerInstaller.cs"
+"Assets/Scripts/Interfaces/Listeners.cs"
 "Assets/Scripts/Level/LevelBackground.cs"
 "Assets/Scripts/Level/LevelBounds.cs"
+"Assets/Scripts/StartGameController/CountdownTime.cs"
+"Assets/Scripts/StartGameController/TimerManager.cs"
 -langversion:9.0
 
 /deterministic

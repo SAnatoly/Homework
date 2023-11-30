@@ -3,14 +3,18 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class BulletSystem : MonoBehaviour
+    public sealed class BulletSystem : MonoBehaviour, Listeners.IGameStartListener, Listeners.IGameFinishListener, Listeners.IGamePauseListener, Listeners.IGameResumListener, Listeners.IGameFixedUpdate
     {
       
         private readonly HashSet<Bullet> activeBullets = new();
         private readonly List<Bullet> cache = new();
         [SerializeField] BulletSpawner bulletSpawner;
         [SerializeField] BulletPool bulletPool;
-        
+
+        private void Awake()
+        {
+            enabled = false;
+        }
         public void SpawnBullet(Args _args)
         {
            Bullet _bullet = bulletSpawner.SpawnBullet(bulletPool.prefab, activeBullets, bulletPool);
@@ -36,7 +40,27 @@ namespace ShootEmUp
             bulletPool.RemoveBullet(_bullet, activeBullets, this);
         }
 
-        private void FixedUpdate()
+        public void OnStart()
+        {
+            enabled = true;
+        }
+
+        public void OnFinish()
+        {
+            enabled = false;
+        }
+
+        public void OnPause()
+        {
+            enabled = false;
+        }
+
+        public void OnResum()
+        {
+            enabled = true;
+        }
+
+        public void OnFixedUpdate(float deltaTime)
         {
             this.cache.Clear();
             this.cache.AddRange(this.activeBullets);
@@ -50,8 +74,6 @@ namespace ShootEmUp
                 }
             }
         }
-
-
     }
 
     public struct Args
