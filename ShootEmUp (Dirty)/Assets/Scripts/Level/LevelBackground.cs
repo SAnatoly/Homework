@@ -3,7 +3,12 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class LevelBackground : MonoBehaviour, Listeners.IGameStartListener, Listeners.IGamePauseListener, Listeners.IGameResumListener, Listeners.IGameFinishListener, Listeners.IGameFixedUpdate
+    public sealed class LevelBackground : MonoBehaviour, 
+        IGameStartListener, 
+        IGamePauseListener, 
+        IGamePlayingListener, 
+        IGameFinishListener, 
+        IGameFixedUpdateListener
     {
         private float startPositionY;
 
@@ -49,7 +54,7 @@ namespace ShootEmUp
             this.enabled = false;
         }
 
-        public void OnResum()
+        public void OnPlaying()
         {
             enabled = true;
         }

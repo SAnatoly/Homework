@@ -12,30 +12,41 @@ namespace ShootEmUp
 
         [SerializeField] private Transform container;
         public Bullet prefab;
-        
+        public GameManager gameManager;
         public LevelBounds levelBounds;
 
-        public readonly Queue<Bullet> bulletPool = new();
+        private readonly Queue<Bullet> bulletPool = new();
 
 
         private void Awake()
         {
             for (var i = 0; i < this.initialCount; i++)
             {
-                var _bullet = Instantiate(this.prefab, this.container);
-                this.bulletPool.Enqueue(_bullet);
+               SpawnBullet();
             }
         }
 
-
-        public void RemoveBullet(Bullet _bullet, HashSet<Bullet> _activeBullets, BulletSystem _bulletSystem)
+        private Bullet SpawnBullet()
         {
-            if (_activeBullets.Remove(_bullet))
-            {
-                _bullet.OnCollisionEntered -= _bulletSystem.OnBulletCollision;
-                _bullet.transform.SetParent(this.container);
-                this.bulletPool.Enqueue(_bullet);
-            }
+            var _bullet = Instantiate(this.prefab, this.container);
+            this.bulletPool.Enqueue(_bullet);
+            gameManager.AddListener(_bullet);
+            return _bullet;
+        }
+        
+        public Bullet GetBullet()
+        {
+            if (bulletPool.TryDequeue(out Bullet bullet))
+                return bullet;
+            
+            return SpawnBullet();
+        }
+        
+        public void RemoveBullet(Bullet _bullet)
+        {
+            _bullet.transform.SetParent(this.container);
+            this.bulletPool.Enqueue(_bullet);
+            gameManager.RemoveListener(_bullet);
         }
     }
 }

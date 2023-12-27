@@ -20,11 +20,25 @@ namespace ShootEmUp
         {
             for (var i = 0; i < countEnemy; i++)
             {
-                var _enemy = Instantiate(this.prefab, this.container);
-                this.enemyPool.Enqueue(_enemy);
+                SpawnAndAddEnemyPool();
             }
         }
 
+        
+        public GameObject SpawnAndAddEnemyPool()
+        {
+            var _enemy = Instantiate(this.prefab, this.container);
+            this.enemyPool.Enqueue(_enemy);
+            return _enemy;
+        }
+
+        public GameObject GetEnemy()
+        {
+            if (enemyPool.TryDequeue(out GameObject enemy))
+                return enemy;
+            
+            return SpawnAndAddEnemyPool();
+        }
         public void RemoveEnemy(GameObject _enemy)
         {
             _enemy.transform.SetParent(this.container);

@@ -3,62 +3,14 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class BulletSystem : MonoBehaviour, Listeners.IGameStartListener, Listeners.IGameFinishListener, Listeners.IGamePauseListener, Listeners.IGameResumListener, Listeners.IGameFixedUpdate
+    public sealed class BulletSystem : MonoBehaviour,
+        IGameFixedUpdateListener
     {
       
         private readonly HashSet<Bullet> activeBullets = new();
         private readonly List<Bullet> cache = new();
         [SerializeField] BulletSpawner bulletSpawner;
         [SerializeField] BulletPool bulletPool;
-
-        private void Awake()
-        {
-            enabled = false;
-        }
-        public void SpawnBullet(Args _args)
-        {
-           Bullet _bullet = bulletSpawner.SpawnBullet(bulletPool.prefab, activeBullets, bulletPool);
-
-            _bullet.SetPosition(_args.position);
-            _bullet.SetColor(_args.color);
-            _bullet.SetPhysicsLayer(_args.physicsLayer);
-            _bullet.damage = _args.damage;
-            _bullet.isPlayer = _args.isPlayer;
-            _bullet.SetVelocity(_args.velocity);
-
-            if (activeBullets.Add(_bullet))
-            {
-                _bullet.OnCollisionEntered += this.OnBulletCollision;
-            }
-        }
-
-       
-        
-        public void OnBulletCollision(Bullet _bullet, Collision2D _collision)
-        {
-            BulletDamage.DealDamage(_bullet, _collision.gameObject);
-            bulletPool.RemoveBullet(_bullet, activeBullets, this);
-        }
-
-        public void OnStart()
-        {
-            enabled = true;
-        }
-
-        public void OnFinish()
-        {
-            enabled = false;
-        }
-
-        public void OnPause()
-        {
-            enabled = false;
-        }
-
-        public void OnResum()
-        {
-            enabled = true;
-        }
 
         public void OnFixedUpdate(float deltaTime)
         {
@@ -67,22 +19,46 @@ namespace ShootEmUp
 
             for (int i = 0, count = this.cache.Count; i < count; i++)
             {
-                var _bullet = this.cache[i];
+                Bullet _bullet = this.cache[i];
                 if (!bulletPool.levelBounds.InBounds(_bullet.transform.position))
                 {
-                    bulletPool.RemoveBullet(_bullet, activeBullets, this);
+                    RemoveBullet(_bullet);
                 }
             }
         }
-    }
+        
+        public void SpawnBullet(BulletArgs bulletArgs)
+        {
+           Bullet _bullet = bulletSpawner.SpawnBullet();
 
-    public struct Args
-    {
-        public Vector2 position;
-        public Vector2 velocity;
-        public Color color;
-        public int physicsLayer;
-        public int damage;
-        public bool isPlayer;
+            _bullet.SetPosition(bulletArgs.position);
+            _bullet.SetColor(bulletArgs.color);
+            _bullet.SetPhysicsLayer(bulletArgs.physicsLayer);
+            _bullet.Damage = bulletArgs.damage;
+            _bullet.IsPlayer = bulletArgs.isPlayer;
+            _bullet.SetVelocity(bulletArgs.velocity);
+
+            if (activeBullets.Add(_bullet))
+            {
+                _bullet.OnCollisionEntered += this.OnBulletCollision;
+            }
+        }
+
+        private void OnBulletCollision(Bullet _bullet, Collision2D _collision)
+        {
+           
+            RemoveBullet(_bullet);
+        }
+
+        private void RemoveBullet(Bullet _bullet)
+        {
+            
+            if (activeBullets.Remove(_bullet))
+                return;
+            
+            bulletPool.RemoveBullet(_bullet);
+            _bullet.OnCollisionEntered -= OnBulletCollision;
+            
+        }
     }
 }

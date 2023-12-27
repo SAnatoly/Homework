@@ -3,12 +3,14 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class Bullet : MonoBehaviour
+    public sealed class Bullet : MonoBehaviour, 
+        IGamePauseListener,
+        IGamePlayingListener
     {
         public event Action<Bullet, Collision2D> OnCollisionEntered;
 
-        [NonSerialized] public bool isPlayer;
-        [NonSerialized] public int damage;
+        public bool IsPlayer { get; set; }
+        public int Damage { get; set; }
 
         [SerializeField]
         private new Rigidbody2D rigidbody2D;
@@ -16,9 +18,26 @@ namespace ShootEmUp
         [SerializeField]
         private SpriteRenderer spriteRenderer;
 
+
+        private Vector2 oldVelocity;
         private void OnCollisionEnter2D(Collision2D collision)
         {
             this.OnCollisionEntered?.Invoke(this, collision);
+            
+            if (!collision.transform.TryGetComponent(out TeamComponent _team))
+            {
+                return;
+            }
+
+            if (IsPlayer == _team.IsPlayer)
+            {
+                return;
+            }
+
+            if (collision.transform.TryGetComponent(out HitPointsComponent _hitPoints))
+            {
+                _hitPoints.TakeDamage(Damage);
+            }
         }
 
         public void SetVelocity(Vector2 velocity)
@@ -39,6 +58,17 @@ namespace ShootEmUp
         public void SetColor(Color color)
         {
             this.spriteRenderer.color = color;
+        }
+
+        public void OnPause()
+        {
+            oldVelocity = rigidbody2D.velocity;
+            SetVelocity(Vector2.zero);
+        }
+
+        public void OnPlaying()
+        {
+            SetVelocity(oldVelocity);
         }
     }
 }

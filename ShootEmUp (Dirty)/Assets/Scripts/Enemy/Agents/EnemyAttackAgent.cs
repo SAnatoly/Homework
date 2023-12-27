@@ -2,18 +2,17 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class EnemyAttackAgent : MonoBehaviour, 
-        Listeners.IGamePauseListener, 
-        Listeners.IGameResumListener, 
-        Listeners.IGameFinishListener, 
-        Listeners.IGameFixedUpdate
+    public sealed class EnemyAttackAgent : MonoBehaviour,
+        IGameFixedUpdateListener
     {
-        public delegate void FireHandler(GameObject enemy, Vector2 position, Vector2 direction);
-
-        public event FireHandler OnFire;
+       
 
         [SerializeField] private WeaponComponent weaponComponent;
         [SerializeField] private EnemyMoveAgent moveAgent;
+        [SerializeField] private BulletSystem bulletSystem;
+        
+        [SerializeField] private BulletConfig config;
+        
         [SerializeField] private float countdown;
 
         private GameObject target;
@@ -34,7 +33,17 @@ namespace ShootEmUp
             var startPosition = this.weaponComponent.position;
             var vector = (Vector2) this.target.transform.position - startPosition;
             var direction = vector.normalized;
-            this.OnFire?.Invoke(this.gameObject, startPosition, direction);
+            
+            
+            bulletSystem.SpawnBullet(new BulletArgs
+            {
+                isPlayer = false,
+                physicsLayer = (int) config.physicsLayer,
+                color = config.color,
+                damage = config.damage,
+                position = startPosition,
+                velocity = direction * config.speed
+            });
         }
 
         public void OnFixedUpdate(float deltaTime)
@@ -57,19 +66,6 @@ namespace ShootEmUp
             }
         }
 
-        public void OnFinish()
-        {
-            enabled = false;
-        }
-
-        public void OnResum()
-        {
-            enabled = true;
-        }
-
-        public void OnPause()
-        {
-            enabled = false;
-        }
+        public void GetBulletSystem(BulletSystem _bulletSystem) => bulletSystem = _bulletSystem;
     }
 }

@@ -7,18 +7,11 @@ namespace ShootEmUp
     public class BulletSpawner : MonoBehaviour
     {
         [SerializeField] private Transform worldTransform;
-
-        public Bullet SpawnBullet(Bullet _prefab, HashSet<Bullet> _activeBullets, BulletPool _bulletPool)
+        [SerializeField] private BulletPool _bulletPool;
+        public Bullet SpawnBullet()
         {
-            if (_bulletPool.bulletPool.TryDequeue(out var bullet))
-            {
-                bullet.transform.SetParent(this.worldTransform);
-            }
-            else
-            {
-                bullet = Instantiate(_prefab, this.worldTransform);
-            }
-
+            Bullet bullet = _bulletPool.GetBullet();
+            bullet.transform.SetParent(this.worldTransform);
             return bullet;
         } 
     }

@@ -4,53 +4,71 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-
-    public enum GameState
-    {
-        None,
-        Start,
-        Pause,
-        Resume,
-        Finish
-    }
-
     public sealed class GameManager : MonoBehaviour
     {
         [SerializeField, ReadOnly] private GameState gameState;
 
-        public List<Listeners.IGameListener> listeners = new();
-        private List<Listeners.IGameUpdate> updateListeners = new();
-        private List<Listeners.IGameLateUpdate> lateUpdateListeners = new();
-        private List<Listeners.IGameFixedUpdate> fixedUpdateListeners = new();
-        public void AddListtteners(Listeners.IGameListener listener)
+        private List<IGameListener> _listeners = new();
+        private List<IGameUpdateListener> _updateListeners = new();
+        private List<IGameLateUpdateListener> _lateUpdateListeners = new();
+        private List<IGameFixedUpdateListener> _fixedUpdateListeners = new();
+        public void AddListener(IGameListener listener)
         {
-            listeners.Add(listener);
-            Debug.Log("Update");
-            if (listener is Listeners.IGameUpdate updateListener)
+            _listeners.Add(listener);
+            if (listener is IGameUpdateListener updateListener)
             {
-                updateListeners.Add(updateListener);
-                Debug.Log("Update");
+                _updateListeners.Add(updateListener);
             }
 
-            if (listener is Listeners.IGameLateUpdate lateUpdateListener)
+            if (listener is IGameLateUpdateListener lateUpdateListener)
             {
-                lateUpdateListeners.Add(lateUpdateListener);
-                Debug.Log("Late");
+                _lateUpdateListeners.Add(lateUpdateListener);
             }
 
-            if (listener is Listeners.IGameFixedUpdate fixedUpdateListener)
+            if (listener is IGameFixedUpdateListener fixedUpdateListener)
             {
-                fixedUpdateListeners.Add(fixedUpdateListener);
-                Debug.Log("Fixed");
+                _fixedUpdateListeners.Add(fixedUpdateListener);
             }
         }
 
-        
-        public void OnStart()
+        public void AddListeners(GameObject parent)
         {
-            foreach(var gameListeners in listeners)
+            IGameListener[] listeners = parent.GetComponentsInChildren<IGameListener>();
+
+            foreach (var gameListener in listeners)
             {
-                if(gameListeners is Listeners.IGameStartListener startListener)
+                AddListener(gameListener);
+            }
+        }
+        
+        public void RemoveListener(IGameListener listener)
+        {
+            _listeners.Remove(listener);
+            if (listener is IGameUpdateListener updateListener)
+            {
+                _updateListeners.Remove(updateListener);
+            }
+
+            if (listener is IGameLateUpdateListener lateUpdateListener)
+            {
+                _lateUpdateListeners.Remove(lateUpdateListener);
+            }
+
+            if (listener is IGameFixedUpdateListener fixedUpdateListener)
+            {
+                _fixedUpdateListeners.Remove(fixedUpdateListener);
+            }
+        }
+        
+        public void StartGame()
+        {
+
+            if (gameState != GameState.None)
+                return;
+            
+            foreach(var gameListeners in _listeners)
+            {
+                if(gameListeners is IGameStartListener startListener)
                 {
                     startListener.OnStart();
                 }
@@ -58,73 +76,83 @@ namespace ShootEmUp
             gameState = GameState.Start;
         }
 
-        public void OnPause()
+        public void PauseGame()
         {
-            foreach (var gameListeners in listeners)
+            if(gameState != GameState.Playing)
+                return;
+            
+            foreach (var gameListeners in _listeners)
             {
-                if (gameListeners is Listeners.IGamePauseListener startListener)
+                if (gameListeners is IGamePauseListener startListener)
                 {
-                    Debug.Log("Pause");
                     startListener.OnPause();
                 }
             }
             gameState = GameState.Pause;
         }
 
-        public void OnResum()
+        public void PlayingGame()
         {
-            foreach (var gameListeners in listeners)
+            Debug.Log("Playing");
+            if(gameState != GameState.Pause && gameState != GameState.Start)
+                return;
+            
+            foreach (var gameListeners in _listeners)
             {
-                if (gameListeners is Listeners.IGameResumListener startListener)
+                if (gameListeners is IGamePlayingListener startListener)
                 {
-                    startListener.OnResum();
+                    startListener.OnPlaying();
                 }
             }
-            gameState = GameState.Resume;
+            gameState = GameState.Playing;
         }
 
-        public void OnFinish()
+        public void FinishGame()
         {
-            foreach (var gameListeners in listeners)
+            if(gameState is GameState.None or GameState.Finish)
+                return;
+            
+            foreach (var gameListeners in _listeners)
             {
-                if (gameListeners is Listeners.IGameFinishListener startListener)
+                if (gameListeners is IGameFinishListener startListener)
                 {
                     startListener.OnFinish();
                 }
             }
             gameState = GameState.Finish;
-        }
-
-        
-        public void FinishGame()
-        {
-            Debug.Log("Game over!");
             Time.timeScale = 0;
         }
 
         public void Update()
         {
-            for (int i = 0; i < updateListeners.Count; i++)
+            if(gameState != GameState.Playing)
+                return;
+            Debug.Log("Update");
+            for (int i = 0; i < _updateListeners.Count; i++)
             {
-                updateListeners[i].OnUpdate(Time.deltaTime);
-               
+                _updateListeners[i].OnUpdate(Time.deltaTime);
             }
         }
 
         public void LateUpdate()
         {
-            for (int i = 0; i < lateUpdateListeners.Count; i++)
+            if(gameState != GameState.Playing)
+                return;
+            
+            for (int i = 0; i < _lateUpdateListeners.Count; i++)
             {
-                lateUpdateListeners[i].OnLateUpdate(Time.deltaTime);
+                _lateUpdateListeners[i].OnLateUpdate(Time.deltaTime);
             }
         }
 
         public void FixedUpdate()
         {
-            for (int i = 0; i < fixedUpdateListeners.Count; i++)
+            if(gameState != GameState.Playing)
+                return;
+            
+            for (int i = 0; i < _fixedUpdateListeners.Count; i++)
             {
-                fixedUpdateListeners[i].OnFixedUpdate(Time.fixedDeltaTime);
-                
+                _fixedUpdateListeners[i].OnFixedUpdate(Time.fixedDeltaTime);
             }
         }
     }

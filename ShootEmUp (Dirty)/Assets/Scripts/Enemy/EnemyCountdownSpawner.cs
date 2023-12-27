@@ -4,37 +4,46 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public class EnemyCountdownSpawner : MonoBehaviour, Listeners.IGameStartListener, Listeners.IGamePauseListener, Listeners.IGameResumListener, Listeners.IGameFinishListener
+    public class EnemyCountdownSpawner : MonoBehaviour, 
+        IGameStartListener, 
+        IGamePauseListener, 
+        IGamePlayingListener, 
+        IGameFinishListener
     {
         [SerializeField] private int waitingSeconds;
         [SerializeField] private EnemyManager enemyManager;
-        private void Awake()
-        {
-            enabled = false;
-        }
-
+ 
         public void OnFinish()
         {
-            enabled = false;
+            StopSpawning();
         }
 
         public void OnPause()
         {
-            enabled = false;
+            StopSpawning();
         }
 
-        public void OnResum()
+        public void OnPlaying()
         {
-            enabled = true;
+            StartSpawning();
         }
 
         public void OnStart()
         {
-            enabled = true;
-            StartCoroutine(Spawn());
+            StartSpawning();
         }
 
-        public IEnumerator Spawn()
+        private void StartSpawning()
+        {
+            StartCoroutine(nameof(Spawn));
+        }
+
+        private void StopSpawning()
+        {
+            StopCoroutine(nameof(Spawn));
+        }
+        
+        private IEnumerator Spawn()
         {
             while (true)
             {

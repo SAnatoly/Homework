@@ -2,11 +2,12 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class EnemyMoveAgent : MonoBehaviour,  
-        Listeners.IGamePauseListener, 
-        Listeners.IGameResumListener, 
-        Listeners.IGameFinishListener, 
-        Listeners.IGameFixedUpdate
+    public sealed class EnemyMoveAgent : MonoBehaviour, 
+        IGameStartListener,
+        IGamePauseListener, 
+        IGamePlayingListener, 
+        IGameFinishListener, 
+        IGameFixedUpdateListener
     {
       
         public bool IsReached
@@ -24,21 +25,27 @@ namespace ShootEmUp
         {
             this.destination = endPoint;
             this.isReached = false;
+            Debug.Log("Destination");
         }
 
+        public void OnStart()
+        {
+           // enabled = true;
+        }
+    
         public void OnPause()
         {
-            enabled = false;
+            //enabled = false;
         }
 
-        public void OnResum()
+        public void OnPlaying()
         {
-            enabled = true;
+           // enabled = true;
         }
 
         public void OnFinish()
         {
-            enabled = false;
+           // enabled = false;
         }
 
         public void OnFixedUpdate(float time)
@@ -58,7 +65,7 @@ namespace ShootEmUp
             }
             Debug.Log("3");
             var direction = vector.normalized * Time.fixedDeltaTime;
-            this.moveComponent.MoveByRigidbodyVelocity(direction);
+            this.moveComponent.Move(direction);
         }
     }
 }

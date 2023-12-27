@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -10,13 +8,7 @@ namespace ShootEmUp
         private void Awake()
         {
             var manager = GetComponent<GameManager>();
-            var listeners = GetComponentsInChildren<Listeners.IGameListener>();
-
-            foreach (var gameListener in listeners)
-            {
-                manager.AddListtteners(gameListener);
-                
-            }
+           manager.AddListeners(gameObject);
         }
     }
 }
