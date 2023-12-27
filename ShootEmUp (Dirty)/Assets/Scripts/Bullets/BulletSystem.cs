@@ -3,24 +3,40 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class BulletSystem : MonoBehaviour
+    public sealed class BulletSystem : MonoBehaviour,
+        IGameFixedUpdateListener
     {
       
         private readonly HashSet<Bullet> activeBullets = new();
         private readonly List<Bullet> cache = new();
         [SerializeField] BulletSpawner bulletSpawner;
         [SerializeField] BulletPool bulletPool;
-        
-        public void SpawnBullet(Args _args)
-        {
-           Bullet _bullet = bulletSpawner.SpawnBullet(bulletPool.prefab, activeBullets, bulletPool);
 
-            _bullet.SetPosition(_args.position);
-            _bullet.SetColor(_args.color);
-            _bullet.SetPhysicsLayer(_args.physicsLayer);
-            _bullet.damage = _args.damage;
-            _bullet.isPlayer = _args.isPlayer;
-            _bullet.SetVelocity(_args.velocity);
+        public void OnFixedUpdate(float deltaTime)
+        {
+            this.cache.Clear();
+            this.cache.AddRange(this.activeBullets);
+
+            for (int i = 0, count = this.cache.Count; i < count; i++)
+            {
+                Bullet _bullet = this.cache[i];
+                if (!bulletPool.levelBounds.InBounds(_bullet.transform.position))
+                {
+                    RemoveBullet(_bullet);
+                }
+            }
+        }
+        
+        public void SpawnBullet(BulletArgs bulletArgs)
+        {
+           Bullet _bullet = bulletSpawner.SpawnBullet();
+
+            _bullet.SetPosition(bulletArgs.position);
+            _bullet.SetColor(bulletArgs.color);
+            _bullet.SetPhysicsLayer(bulletArgs.physicsLayer);
+            _bullet.Damage = bulletArgs.damage;
+            _bullet.IsPlayer = bulletArgs.isPlayer;
+            _bullet.SetVelocity(bulletArgs.velocity);
 
             if (activeBullets.Add(_bullet))
             {
@@ -28,39 +44,21 @@ namespace ShootEmUp
             }
         }
 
-       
-        
-        public void OnBulletCollision(Bullet _bullet, Collision2D _collision)
+        private void OnBulletCollision(Bullet _bullet, Collision2D _collision)
         {
-            BulletDamage.DealDamage(_bullet, _collision.gameObject);
-            bulletPool.RemoveBullet(_bullet, activeBullets, this);
+           
+            RemoveBullet(_bullet);
         }
 
-        private void FixedUpdate()
+        private void RemoveBullet(Bullet _bullet)
         {
-            this.cache.Clear();
-            this.cache.AddRange(this.activeBullets);
-
-            for (int i = 0, count = this.cache.Count; i < count; i++)
-            {
-                var _bullet = this.cache[i];
-                if (!bulletPool.levelBounds.InBounds(_bullet.transform.position))
-                {
-                    bulletPool.RemoveBullet(_bullet, activeBullets, this);
-                }
-            }
+            
+            if (activeBullets.Remove(_bullet))
+                return;
+            
+            bulletPool.RemoveBullet(_bullet);
+            _bullet.OnCollisionEntered -= OnBulletCollision;
+            
         }
-
-
-    }
-
-    public struct Args
-    {
-        public Vector2 position;
-        public Vector2 velocity;
-        public Color color;
-        public int physicsLayer;
-        public int damage;
-        public bool isPlayer;
     }
 }

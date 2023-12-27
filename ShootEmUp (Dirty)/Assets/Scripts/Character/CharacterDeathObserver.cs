@@ -10,12 +10,12 @@ namespace ShootEmUp
         [SerializeField] private GameManager gameManager;
         private void OnEnable()
         {
-            this.character.GetComponent<HitPointsComponent>().hpEmpty += OnCharacterDeath;
+            this.character.GetComponent<HitPointsComponent>().OnHpEmpty += OnCharacterDeath;
         }
 
         private void OnDisable()
         {
-            this.character.GetComponent<HitPointsComponent>().hpEmpty -= OnCharacterDeath;
+            this.character.GetComponent<HitPointsComponent>().OnHpEmpty -= OnCharacterDeath;
         }
 
         public void OnCharacterDeath(GameObject _)

@@ -6,23 +6,16 @@ namespace ShootEmUp
 {
     public class EnemySpawner : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject character;
+        [SerializeField] private GameObject character;
 
         [Header("Spawn")]
-        [SerializeField]
-        private EnemyPositions enemyPositions;
-
-        [SerializeField]
-        private Transform worldTransform;
+        [SerializeField] private EnemyPositions enemyPositions;
+        [SerializeField] private Transform worldTransform;
         [SerializeField] private EnemyPool enemyPool;
+        
         public GameObject SpawnEnemy()
         {
-            if (!enemyPool.enemyPool.TryDequeue(out var _enemy))
-            {
-                return null;
-            }
-
+            var _enemy = enemyPool.GetEnemy();
             _enemy.transform.SetParent(this.worldTransform);
 
             var _spawnPosition = this.enemyPositions.RandomSpawnPosition();

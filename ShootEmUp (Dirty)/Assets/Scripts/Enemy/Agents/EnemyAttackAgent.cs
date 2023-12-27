@@ -2,14 +2,17 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class EnemyAttackAgent : MonoBehaviour
+    public sealed class EnemyAttackAgent : MonoBehaviour,
+        IGameFixedUpdateListener
     {
-        public delegate void FireHandler(GameObject enemy, Vector2 position, Vector2 direction);
-
-        public event FireHandler OnFire;
+       
 
         [SerializeField] private WeaponComponent weaponComponent;
         [SerializeField] private EnemyMoveAgent moveAgent;
+        [SerializeField] private BulletSystem bulletSystem;
+        
+        [SerializeField] private BulletConfig config;
+        
         [SerializeField] private float countdown;
 
         private GameObject target;
@@ -25,13 +28,31 @@ namespace ShootEmUp
             this.currentTime = this.countdown;
         }
 
-        private void FixedUpdate()
+        private void Fire()
+        {
+            var startPosition = this.weaponComponent.position;
+            var vector = (Vector2) this.target.transform.position - startPosition;
+            var direction = vector.normalized;
+            
+            
+            bulletSystem.SpawnBullet(new BulletArgs
+            {
+                isPlayer = false,
+                physicsLayer = (int) config.physicsLayer,
+                color = config.color,
+                damage = config.damage,
+                position = startPosition,
+                velocity = direction * config.speed
+            });
+        }
+
+        public void OnFixedUpdate(float deltaTime)
         {
             if (!this.moveAgent.IsReached)
             {
                 return;
             }
-            
+
             if (!this.target.GetComponent<HitPointsComponent>().IsHitPointsExists())
             {
                 return;
@@ -45,12 +66,6 @@ namespace ShootEmUp
             }
         }
 
-        private void Fire()
-        {
-            var startPosition = this.weaponComponent.position;
-            var vector = (Vector2) this.target.transform.position - startPosition;
-            var direction = vector.normalized;
-            this.OnFire?.Invoke(this.gameObject, startPosition, direction);
-        }
+        public void GetBulletSystem(BulletSystem _bulletSystem) => bulletSystem = _bulletSystem;
     }
 }

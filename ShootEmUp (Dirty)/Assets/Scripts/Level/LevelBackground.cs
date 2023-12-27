@@ -3,7 +3,12 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class LevelBackground : MonoBehaviour
+    public sealed class LevelBackground : MonoBehaviour, 
+        IGameStartListener, 
+        IGamePauseListener, 
+        IGamePlayingListener, 
+        IGameFinishListener, 
+        IGameFixedUpdateListener
     {
         private float startPositionY;
 
@@ -20,18 +25,12 @@ namespace ShootEmUp
         [SerializeField]
         private Params m_params;
 
-        private void Awake()
+        public void OnFinish()
         {
-            this.startPositionY = this.m_params.m_startPositionY;
-            this.endPositionY = this.m_params.m_endPositionY;
-            this.movingSpeedY = this.m_params.m_movingSpeedY;
-            this.myTransform = this.transform;
-            var position = this.myTransform.position;
-            this.positionX = position.x;
-            this.positionZ = position.z;
+            enabled = false;
         }
 
-        private void FixedUpdate()
+        public void OnFixedUpdate(float deltaTime)
         {
             if (this.myTransform.position.y <= this.endPositionY)
             {
@@ -47,6 +46,34 @@ namespace ShootEmUp
                 this.movingSpeedY * Time.fixedDeltaTime,
                 this.positionZ
             );
+        }
+
+        public void OnPause()
+        {
+            Debug.Log("Enable");
+            this.enabled = false;
+        }
+
+        public void OnPlaying()
+        {
+            enabled = true;
+        }
+
+        public void OnStart()
+        {
+            enabled = true;
+        }
+
+        private void Awake()
+        {
+            this.startPositionY = this.m_params.m_startPositionY;
+            this.endPositionY = this.m_params.m_endPositionY;
+            this.movingSpeedY = this.m_params.m_movingSpeedY;
+            this.myTransform = this.transform;
+            var position = this.myTransform.position;
+            this.positionX = position.x;
+            this.positionZ = position.z;
+            enabled = false;
         }
 
         [Serializable]
