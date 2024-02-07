@@ -3,39 +3,45 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public class CharacterAttackController: MonoBehaviour, 
+    public class CharacterAttackController:  
         IGameStartListener, 
         IGameFinishListener, 
         IGamePauseListener, 
         IGamePlayingListener
     {
-        [SerializeField] private CharacterAttackAgent _attackAgent;
-        [SerializeField] private KeyboardInput _input;
-      
+        [SerializeField] private CharacterAttackAgent attackAgent;
+        [SerializeField] private KeyboardInput input;
+
+
+        public CharacterAttackController(CharacterAttackAgent _attackAgent, KeyboardInput _input)
+        {
+            input = _input;
+            attackAgent = _attackAgent;
+        }
         
         public void OnStart()
         {
-            _input.OnFire += Attack;
+            input.fire += Attack;
         }
         
         public void OnPause()
         {
-            _input.OnFire -= Attack;
+            input.fire -= Attack;
         }
 
         public void OnPlaying()
         {
-            _input.OnFire += Attack;
+            input.fire += Attack;
         }
 
         public void OnFinish()
         {
-            _input.OnFire -= Attack;
+            input.fire -= Attack;
         }
 
         private void Attack()
         {
-            _attackAgent.Shoot();
+            attackAgent.Shoot();
         }
     }
 }

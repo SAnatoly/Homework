@@ -18,9 +18,9 @@ namespace ShootEmUp
         private GameObject target;
         private float currentTime;
 
-        public void SetTarget(GameObject target)
+        public void SetTarget(GameObject _target)
         {
-            this.target = target;
+            this.target = _target;
         }
 
         public void Reset()
@@ -46,7 +46,7 @@ namespace ShootEmUp
             });
         }
 
-        public void OnFixedUpdate(float deltaTime)
+        public void OnFixedUpdate(float _deltaTime)
         {
             if (!this.moveAgent.IsReached)
             {

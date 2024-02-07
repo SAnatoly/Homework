@@ -1,14 +1,13 @@
 using System.Collections;
 using System;
-using System.Collections.Generic;
 using ShootEmUp;
 using UnityEngine;
 
 public class CountdownTimer : MonoBehaviour,
     IGameStartListener
 {
-    public event Action OnCompleted;
-    public event Action OnChangeTime;
+    public event Action completed;
+    public event Action changeTime;
     [SerializeField] private int countdownValue;
 
     public void OnStart()
@@ -22,10 +21,10 @@ public class CountdownTimer : MonoBehaviour,
         {
             yield return new WaitForSeconds(1);
             countdownValue--;
-            OnChangeTime.Invoke();
+            changeTime.Invoke();
         }
         
-        OnCompleted?.Invoke();
+        completed?.Invoke();
     }
 
     public int GetTime()

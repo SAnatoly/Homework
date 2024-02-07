@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace ShootEmUp
 {
-    public class CharacterMoveAgent : MonoBehaviour,
-        IGameFixedUpdateListener
+    public class CharacterMoveAgent : ITickable
     {
-        public float HorizontalDirection { get;  set; }
+        public float horizontalDirection { get;  set; }
         
         [SerializeField] private MoveComponent moveComponent;
-        public void OnFixedUpdate(float deltaTime)
+
+        public CharacterMoveAgent(MoveComponent _moveComponent)
         {
-            moveComponent.Move(new Vector2(this.HorizontalDirection, 0) * Time.fixedDeltaTime);
+            moveComponent = _moveComponent;
+        }
+       
+
+        public void Tick()
+        {
+            moveComponent.Move(new Vector2(this.horizontalDirection, 0) * Time.fixedDeltaTime);
+            Debug.Log("Move component");
         }
     }
 }

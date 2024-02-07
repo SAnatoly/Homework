@@ -21,9 +21,9 @@ namespace ShootEmUp
 
         private bool isReached;
 
-        public void SetDestination(Vector2 endPoint)
+        public void SetDestination(Vector2 _endPoint)
         {
-            this.destination = endPoint;
+            this.destination = _endPoint;
             this.isReached = false;
             Debug.Log("Destination");
         }
@@ -48,22 +48,22 @@ namespace ShootEmUp
            // enabled = false;
         }
 
-        public void OnFixedUpdate(float time)
+        public void OnFixedUpdate(float _deltaTime)
         {
-            Debug.Log("1");
+            
             if (this.isReached)
             {
                 return;
             }
 
-            Debug.Log("2");
+           
             var vector = this.destination - (Vector2)this.transform.position;
             if (vector.magnitude <= 0.25f)
             {
                 this.isReached = true;
                 return;
             }
-            Debug.Log("3");
+           
             var direction = vector.normalized * Time.fixedDeltaTime;
             this.moveComponent.Move(direction);
         }

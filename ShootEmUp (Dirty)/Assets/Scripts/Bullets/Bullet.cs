@@ -9,8 +9,8 @@ namespace ShootEmUp
     {
         public event Action<Bullet, Collision2D> OnCollisionEntered;
 
-        public bool IsPlayer { get; set; }
-        public int Damage { get; set; }
+        public bool isPlayer { get; set; }
+        public int damage { get; set; }
 
         [SerializeField]
         private new Rigidbody2D rigidbody2D;
@@ -20,44 +20,44 @@ namespace ShootEmUp
 
 
         private Vector2 oldVelocity;
-        private void OnCollisionEnter2D(Collision2D collision)
+        private void OnCollisionEnter2D(Collision2D _collision)
         {
-            this.OnCollisionEntered?.Invoke(this, collision);
+            this.OnCollisionEntered?.Invoke(this, _collision);
             
-            if (!collision.transform.TryGetComponent(out TeamComponent _team))
+            if (!_collision.transform.TryGetComponent(out TeamComponent _team))
             {
                 return;
             }
 
-            if (IsPlayer == _team.IsPlayer)
+            if (isPlayer == _team.IsPlayer)
             {
                 return;
             }
 
-            if (collision.transform.TryGetComponent(out HitPointsComponent _hitPoints))
+            if (_collision.transform.TryGetComponent(out HitPointsComponent _hitPoints))
             {
-                _hitPoints.TakeDamage(Damage);
+                _hitPoints.TakeDamage(damage);
             }
         }
 
-        public void SetVelocity(Vector2 velocity)
+        public void SetVelocity(Vector2 _velocity)
         {
-            this.rigidbody2D.velocity = velocity;
+            this.rigidbody2D.velocity = _velocity;
         }
 
-        public void SetPhysicsLayer(int physicsLayer)
+        public void SetPhysicsLayer(int _physicsLayer)
         {
-            this.gameObject.layer = physicsLayer;
+            this.gameObject.layer = _physicsLayer;
         }
 
-        public void SetPosition(Vector3 position)
+        public void SetPosition(Vector3 _position)
         {
-            this.transform.position = position;
+            this.transform.position = _position;
         }
 
-        public void SetColor(Color color)
+        public void SetColor(Color _color)
         {
-            this.spriteRenderer.color = color;
+            this.spriteRenderer.color = _color;
         }
 
         public void OnPause()

@@ -12,7 +12,7 @@ namespace ShootEmUp
         [SerializeField] BulletSpawner bulletSpawner;
         [SerializeField] BulletPool bulletPool;
 
-        public void OnFixedUpdate(float deltaTime)
+        public void OnFixedUpdate(float _deltaTime)
         {
             this.cache.Clear();
             this.cache.AddRange(this.activeBullets);
@@ -27,16 +27,16 @@ namespace ShootEmUp
             }
         }
         
-        public void SpawnBullet(BulletArgs bulletArgs)
+        public void SpawnBullet(BulletArgs _bulletArgs)
         {
            Bullet _bullet = bulletSpawner.SpawnBullet();
 
-            _bullet.SetPosition(bulletArgs.position);
-            _bullet.SetColor(bulletArgs.color);
-            _bullet.SetPhysicsLayer(bulletArgs.physicsLayer);
-            _bullet.Damage = bulletArgs.damage;
-            _bullet.IsPlayer = bulletArgs.isPlayer;
-            _bullet.SetVelocity(bulletArgs.velocity);
+            _bullet.SetPosition(_bulletArgs.position);
+            _bullet.SetColor(_bulletArgs.color);
+            _bullet.SetPhysicsLayer(_bulletArgs.physicsLayer);
+            _bullet.damage = _bulletArgs.damage;
+            _bullet.isPlayer = _bulletArgs.isPlayer;
+            _bullet.SetVelocity(_bulletArgs.velocity);
 
             if (activeBullets.Add(_bullet))
             {

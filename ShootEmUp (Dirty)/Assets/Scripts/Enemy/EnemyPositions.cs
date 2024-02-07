@@ -20,10 +20,10 @@ namespace ShootEmUp
             return this.RandomTransform(this.attackPositions);
         }
 
-        private Transform RandomTransform(Transform[] transforms)
+        private Transform RandomTransform(Transform[] _transforms)
         {
-            var index = Random.Range(0, transforms.Length);
-            return transforms[index];
+            var index = Random.Range(0, _transforms.Length);
+            return _transforms[index];
         }
     }
 }

@@ -20,18 +20,18 @@ namespace ShootEmUp
             
             if (this.activeEnemies.Add(_enemy)) 
             { 
-                _enemy.GetComponent<HitPointsComponent>().OnHpEmpty += this.OnDestroyed;
+                _enemy.GetComponent<HitPointsComponent>().hpEmpty += this.Destroyed;
                 manager.AddListener(_enemy.GetComponent<EnemyMoveAgent>());
                 manager.AddListener(_enemy.GetComponent<EnemyAttackAgent>());
                 _enemy.GetComponent<EnemyAttackAgent>().GetBulletSystem(bulletSystem);
             }
             
         }
-        private void OnDestroyed(GameObject _enemy)
+        private void Destroyed(GameObject _enemy)
         {
             if (activeEnemies.Remove(_enemy))
             {
-                _enemy.GetComponent<HitPointsComponent>().OnHpEmpty -= this.OnDestroyed;
+                _enemy.GetComponent<HitPointsComponent>().hpEmpty -= this.Destroyed;
 
                 enemyPool.RemoveEnemy(_enemy);
                 manager.RemoveListener(_enemy.GetComponent<EnemyMoveAgent>());

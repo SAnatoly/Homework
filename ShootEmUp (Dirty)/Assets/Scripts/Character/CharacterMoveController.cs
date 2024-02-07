@@ -3,37 +3,46 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public class CharacterMoveController: MonoBehaviour, 
-        IGameStartListener, 
+    public sealed class CharacterMoveController:  IGameStartListener,
         IGameFinishListener, 
         IGamePauseListener, 
         IGamePlayingListener
     {
-        [SerializeField] private CharacterMoveAgent _moveAgent;
-        [SerializeField] private KeyboardInput _input;
-        public void OnStart()
+        [SerializeField] private CharacterMoveAgent moveAgent;
+        [SerializeField] private KeyboardInput input;
+        
+        
+        public  CharacterMoveController(CharacterMoveAgent _moveAgent, KeyboardInput _input)
         {
-            _input.OnMove += Move;
+            
+            this.moveAgent = _moveAgent;
+            this.input = _input;
+            OnStart();
         }
 
         public void OnPause()
         {
-            _input.OnMove -= Move;
+            input.move -= Move;
         }
 
         public void OnPlaying()
         {
-            _input.OnMove += Move;
+            input.move += Move;
         }
         
         public void OnFinish()
         {
-            _input.OnMove -= Move;
+            input.move -= Move;
         }
 
-        private void Move(Vector2 diraction)
+        private void Move(Vector2 _diraction)
         {
-            _moveAgent.HorizontalDirection = diraction.x;
+            moveAgent.horizontalDirection = _diraction.x;
+        }
+
+        public void OnStart()
+        {
+            input.move += Move;
         }
     }
     

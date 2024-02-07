@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace ShootEmUp
 {
@@ -13,14 +9,14 @@ namespace ShootEmUp
 
         private void Awake()
         {
-            countdownTimer.OnCompleted += StartGame;
+            countdownTimer.completed += StartGame;
         }
 
         private void StartGame()
         {
             
             gameManager.PlayingGame();
-            countdownTimer.OnCompleted -= StartGame;
+            countdownTimer.completed -= StartGame;
         }
     }
 }

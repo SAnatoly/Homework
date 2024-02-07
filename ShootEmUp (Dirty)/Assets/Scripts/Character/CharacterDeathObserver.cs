@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -10,15 +8,15 @@ namespace ShootEmUp
         [SerializeField] private GameManager gameManager;
         private void OnEnable()
         {
-            this.character.GetComponent<HitPointsComponent>().OnHpEmpty += OnCharacterDeath;
+            this.character.GetComponent<HitPointsComponent>().hpEmpty += CharacterDeath;
         }
 
         private void OnDisable()
         {
-            this.character.GetComponent<HitPointsComponent>().OnHpEmpty -= OnCharacterDeath;
+            this.character.GetComponent<HitPointsComponent>().hpEmpty -= CharacterDeath;
         }
 
-        public void OnCharacterDeath(GameObject _)
+        public void CharacterDeath(GameObject _)
         {
             gameManager.FinishGame();
         }

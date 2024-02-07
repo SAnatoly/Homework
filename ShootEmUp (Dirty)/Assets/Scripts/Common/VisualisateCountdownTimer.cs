@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -13,7 +12,7 @@ namespace ShootEmUp
 
         public void Awake()
         {
-            timer.OnChangeTime += UpdateText;
+            timer.changeTime += UpdateText;
             text.text = timer.GetTime().ToString();
         }
 

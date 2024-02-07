@@ -1,29 +1,22 @@
 ﻿using System;
-using ShootEmUp;
 using UnityEngine;
+using Zenject;
 
 namespace GameInput
 {
-    public class KeyboardInput: MonoBehaviour, IGameUpdateListener
+    public sealed class KeyboardInput:  ITickable
     {
-        public event Action OnFire;
-        public event Action<Vector2> OnMove;
+        public event Action fire;
+        public event Action<Vector2> move;
         private Vector2 diraction;
-        public void OnUpdate(float deltaTime)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                OnFire?.Invoke();
-            }
-            
-            OnMove?.Invoke(GetDiraction());
-        }
+    
 
         private Vector2 GetDiraction()
         {
 
             if (Input.GetKeyDown(KeyCode.LeftArrow))       
                 diraction = Vector2.left;
+            
             
             if (Input.GetKeyUp(KeyCode.LeftArrow) && diraction == Vector2.left)       
                 diraction = Vector2.zero;
@@ -34,7 +27,20 @@ namespace GameInput
             if(Input.GetKeyUp(KeyCode.RightArrow) && diraction == Vector2.right)
                 diraction = Vector2.zero;
 
+            Debug.Log(diraction);
             return diraction;
+        }
+
+        public void Tick()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+              
+                fire?.Invoke();
+                
+            }
+            
+            move?.Invoke(GetDiraction());
         }
     }
 }

@@ -30,7 +30,7 @@ namespace ShootEmUp
             enabled = false;
         }
 
-        public void OnFixedUpdate(float deltaTime)
+        public void OnFixedUpdate(float _deltaTime)
         {
             if (this.myTransform.position.y <= this.endPositionY)
             {

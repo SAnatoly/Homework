@@ -27,17 +27,17 @@ namespace ShootEmUp
 
     public interface IGameUpdateListener: IGameListener
     {
-        void OnUpdate(float deltaTime);
+        void OnUpdate(float _deltaTime);
     }
 
     public interface IGameLateUpdateListener: IGameListener
     {
-        void OnLateUpdate(float deltaTime);
+        void OnLateUpdate(float _deltaTime);
     }
 
     public interface IGameFixedUpdateListener: IGameListener
     {
-        void OnFixedUpdate(float fixDeltaTime);
+        void OnFixedUpdate(float _deltaTime);
     }
 
 }
